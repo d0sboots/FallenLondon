@@ -8,9 +8,8 @@
 </head>
 
 <body>
-<h2>Knobs</h2>
+<h2>Knobs</h2><section>
 These affect all the simulations below.
-<p>
 <span class="stats"><label for="watchful">Watchful</label>
   <input id="watchful" type="number" value="167" min="0" max="999" size="3em"></span>
 <span class="stats"><label for="persuasive">Persuasive</label>
@@ -20,9 +19,9 @@ These affect all the simulations below.
     Gift your Attar</a> rare success chance</label>
 <input id="rare_chance" type="number" value="22.5" min="0" max="100" step="any"></span>
 <span class="stats"><label for="num_trials">Number of Trials (more is higher accuracy but slower)</label>
-  <input id="num_trials" type="number" value="1000" min="1"></span>
+  <input id="num_trials" type="number" value="100000" min="1"></span></section>
 
-<h1>Passive Grinds</h1>
+<h1>Passive Grinds</h1><section>
 These are done opportunistically, using 7 actions each time the card is drawn.
 (One to enter, 5 for your allotted
 <a href="https://fallenlondon.fandom.com/wiki/Arbor:_Permission_to_Linger">
@@ -31,11 +30,12 @@ These are done opportunistically, using 7 actions each time the card is drawn.
 <h2><a href="https://fallenlondon.fandom.com/wiki/Spy_on_London%27s_Embassy">Spy on London's Embassy</a>
   in <a href="https://fallenlondon.fandom.com/wiki/Near_Arbor_(North)">Near Arbor (North)</a></h2>
 
-<input id="spy_button" class="button" type="button" value="Simulate">
+<input id="spy_button" class="button" type="button" value="Simulate" onclick="simulate_spy()"></section>
+<section id="spy_results"></section>
 
 <h2>Build Attar to convert via
   <a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
-    Gift your Attar in tribute to the Roseate Queen</a></h2>
+    Gift your Attar in tribute to the Roseate Queen</a></h2><section>
 The next three all follow the same basic principle: Use
 <a href="https://fallenlondon.fandom.com/wiki/Explore_the_Gatehouse_Market">Explore the Gatehouse Market</a>
 (the best option, even with low Watchful, in Near Arbor) to build Attar to 5, when you are forcibly
@@ -58,8 +58,7 @@ Use the following action to gain Attar in Far Arbor:
     Surrender some of your Attar</a> (Requires <b><i>low</i></b> Persuasive)</label></div>
 <span class="stats"><label for="attar_limit">Convert once Attar reaches</label>
 <input id="attar_limit" type="number" value="100" min=5></span>
-<input id="gift_button" class="button" type="button" value="Simulate">
+<input id="gift_button" class="button" type="button" value="Simulate"></section>
+<section id="gift_results"></section>
 
-</body>
-
-</html>
+</body></html>

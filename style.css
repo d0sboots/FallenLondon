@@ -27,5 +27,6 @@ a { color: #4050b0; }
 a:visited { color: #843090; }
 h1,h2,h2 { line-height: 1.1 }
 .stats { display: inline-block; margin-right: 20px }
+.error { color:#e02020 }
 .stats input { width: 50px }
 #num_trials { width: 70px }
