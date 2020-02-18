@@ -38,9 +38,10 @@ These are done opportunistically, using 7 actions each time the card is drawn.
     Gift your Attar in tribute to the Roseate Queen</a></h2><section>
 The next three all follow the same basic principle: Use
 <a href="https://fallenlondon.fandom.com/wiki/Explore_the_Gatehouse_Market">Explore the Gatehouse Market</a>
-(the best option, even with low Watchful, in Near Arbor) to build Attar to 5, when you are forcibly
-moved to Far Arbor. Then continue to build Attar using the given method, until finally converting it
-all using <a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
+(the best option, even with relatively moderate Watchful, in Near Arbor) to build Attar to 5, when you
+are forcibly moved to Far Arbor. Then continue to build Attar using the given method, until finally
+converting it all using
+<a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
   Gift your Attar in tribute to the Roseate Queen</a>. Because the conversion has a rare success
 that converts all remaining Attar at once, when doing large enough batches the cost of movement and
 conversion is negligible, and the efficiency approaches that of the chosen action loop. However, the
@@ -50,15 +51,15 @@ Use the following action to gain Attar in Far Arbor:
 <div><input id="gift_walk" name="gift_radio" type="radio" checked="true">
   <label for="gift_walk"><a href="https://fallenlondon.fandom.com/wiki/Walk_the_walls">
     Walk the Walls</a> (Requires Watchful 167 for full success)</label></div>
-<div><input id="gift_wile" name="gift_radio" type="radio">
-  <label for="gift_wile"><a href="https://fallenlondon.fandom.com/wiki/Wile_away_your_time">
-    Wile away your time</a> (No stat check, farther to travel)</label></div>
+<div><input id="gift_witness" name="gift_radio" type="radio">
+  <label for="gift_witness"><a href="https://fallenlondon.fandom.com/wiki/Witness_a_trial">
+    Witness a trial</a> (Requires <b><i>low</i></b> Watchful)</label></div>
 <div><input id="gift_surrender" name="gift_radio" type="radio">
   <label for="gift_surrender"><a href="https://fallenlondon.fandom.com/wiki/Surrender_some_of_your_Attar">
     Surrender some of your Attar</a> (Requires <b><i>low</i></b> Persuasive)</label></div>
 <span class="stats"><label for="attar_limit">Convert once Attar reaches</label>
-<input id="attar_limit" type="number" value="100" min=5></span>
-<input id="gift_button" class="button" type="button" value="Simulate"></section>
+<input id="attar_limit" type="number" value="1000" min=5></span>
+<input id="gift_button" class="button" type="button" value="Simulate" onclick="simulate_gift()"></section>
 <section id="gift_results"></section>
 
 </body></html>
