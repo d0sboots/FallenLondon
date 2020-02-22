@@ -73,7 +73,7 @@ function init_params() {
 }
 
 function get_knobs() {
-  return Object.fromEntries(["watchful", "persuasive", "rare_chance", "num_trials"]
+  return Object.fromEntries(["watchful", "persuasive", "gear_diff", "rare_chance", "num_trials"]
       .map(key => [key, Number(document.getElementById(key).value)]));
 }
 
@@ -99,7 +99,7 @@ function chosen_distribution(knobs, choices) {
     success[PENNIES] = 750;
     failure[ATTAR] = 2;
     failure[PENNIES] = -250;
-    prob = challenge(knobs.watchful, 115, WATCHFUL, success, failure);
+    prob = challenge(knobs.watchful - knobs.gear_diff, 115, WATCHFUL, success, failure);
     target_street = 5;
   } else if (checked === "surrender") {
     success[ATTAR] = -3;
