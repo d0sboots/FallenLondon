@@ -3,11 +3,15 @@
 
 <head>
   <title>Grinding the Rose: An Arbor Simulator</title>
+  <link rel="stylesheet" href="jekyll-theme-midnight.css"/>
   <link rel="stylesheet" href="style.css"/>
   <script src="arbor.js"></script>
 </head>
 
 <body>
+<h1>This is a simulator for actions in
+<a href="https://fallenlondon.fandom.com/wiki/A_Dream_of_Roses">Arbor</a>
+in the game <a href="https://fallenlondon.com">Fallen London</a>.</h1>
 <h2>Knobs</h2><section>
 These affect all the simulations below.<br>
 <span class="stats"><label for="watchful">Watchful (with best gear)</label>
@@ -22,46 +26,56 @@ These affect all the simulations below.<br>
 <input id="rare_chance" type="number" value="22.5" min="0" max="100" step="any"></span>
 <span class="stats"><label for="num_trials">Number of Trials (more is higher accuracy but slower)</label>
   <input id="num_trials" type="number" value="100000" min="1"></span></section>
+<p>
+The following action will be used to gain Attar in Near Arbor:
+<div><input id="near_explore" name="near_radio" type="radio" checked="true">
+  <label for="near_explore"><a href="https://fallenlondon.fandom.com/wiki/Explore_the_Gatehouse_Market">
+    Explore the Gatehouse Market</a> (Requires Watchful 125 for full success)</label></div>
+<div><input id="near_tend" name="near_radio" type="radio">
+  <label for="near_tend"><a href="https://fallenlondon.fandom.com/wiki/Become_a_serpent-tender_in_exchange_for_Attar">
+    Become a serpent-tender in exchange for Attar</a> (No prerequisite)</label></div>
+<p>
+The following action will be used to gain Attar in Far Arbor:
+<div><input id="far_walk" name="far_radio" type="radio" checked="true">
+  <label for="far_walk"><a href="https://fallenlondon.fandom.com/wiki/Walk_the_walls">
+    Walk the Walls</a> (Requires Watchful 167 for full success)</label></div>
+<div><input id="far_witness" name="far_radio" type="radio">
+  <label for="far_witness"><a href="https://fallenlondon.fandom.com/wiki/Witness_a_trial">
+    Witness a trial</a> (Requires <b><i>low</i></b> Watchful, uses "difference" knob to lower stat)</label></div>
+<div><input id="far_surrender" name="far_radio" type="radio">
+  <label for="far_surrender"><a href="https://fallenlondon.fandom.com/wiki/Surrender_some_of_your_Attar">
+    Surrender some of your Attar</a> (Requires <b><i>low</i></b> Persuasive)</label></div>
 
-<h1>Passive Grinds</h1><section>
+<h2>Passive Grinds</h2><section>
 These are done opportunistically, using 7 actions each time the card is drawn.
 (One to enter, 5 for your allotted
 <a href="https://fallenlondon.fandom.com/wiki/Arbor:_Permission_to_Linger">
   Permission to Linger</a>, and one to leave.)
 
-<h2><a href="https://fallenlondon.fandom.com/wiki/Spy_on_London%27s_Embassy">Spy on London's Embassy</a>
-  in <a href="https://fallenlondon.fandom.com/wiki/Near_Arbor_(North)">Near Arbor (North)</a></h2>
-
-<input id="spy_button" class="button" type="button" value="Simulate" onclick="simulate_spy()"></section>
+<h3><a href="https://fallenlondon.fandom.com/wiki/Spy_on_London%27s_Embassy">Spy on London's Embassy</a>
+  in <a href="https://fallenlondon.fandom.com/wiki/Near_Arbor_(North)">Near Arbor (North)</a></h3>
+A simple grind where you just spam the same action.
+Requires Watchful 125 for full success.
+<input id="spy_button" class="button" type="button" value="Simulate" onclick="simulate('spy')"></section>
 <section id="spy_results"></section>
 
-<h2>Build Attar to convert via
+<h3>Build Attar to convert via
   <a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
-    Gift your Attar in tribute to the Roseate Queen</a></h2><section>
-The next three all follow the same basic principle: Use
-<a href="https://fallenlondon.fandom.com/wiki/Explore_the_Gatehouse_Market">Explore the Gatehouse Market</a>
-(the best option, even with relatively moderate Watchful, in Near Arbor) to build Attar to 5, when you
-are forcibly moved to Far Arbor. Then continue to build Attar using the given method, until finally
+    Gift your Attar in tribute to the Roseate Queen</a></h3><section>
+The next three all follow the same basic principle: Use the chosen action in
+Near Arbor to build Attar to 5 (or more), when you are forcibly moved to Far
+Arbor. Then continue to build Attar using the given method, until finally
 converting it all using
 <a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
   Gift your Attar in tribute to the Roseate Queen</a>. Because the conversion has a rare success
 that converts all remaining Attar at once, when doing large enough batches the cost of movement and
 conversion is negligible, and the efficiency approaches that of the chosen action loop. However, the
-profits are deferred, whereas with spying they are immediate.
+profits are deferred, whereas with spying they are immediate. Note that Surrendering also pays some
+of its profit immediately, in the form of Extraordinary Implications.
 <p>
-Use the following action to gain Attar in Far Arbor:
-<div><input id="gift_walk" name="gift_radio" type="radio" checked="true">
-  <label for="gift_walk"><a href="https://fallenlondon.fandom.com/wiki/Walk_the_walls">
-    Walk the Walls</a> (Requires Watchful 167 for full success)</label></div>
-<div><input id="gift_witness" name="gift_radio" type="radio">
-  <label for="gift_witness"><a href="https://fallenlondon.fandom.com/wiki/Witness_a_trial">
-    Witness a trial</a> (Requires <b><i>low</i></b> Watchful)</label></div>
-<div><input id="gift_surrender" name="gift_radio" type="radio">
-  <label for="gift_surrender"><a href="https://fallenlondon.fandom.com/wiki/Surrender_some_of_your_Attar">
-    Surrender some of your Attar</a> (Requires <b><i>low</i></b> Persuasive)</label></div>
 <span class="stats"><label for="attar_limit">Convert once Attar reaches</label>
 <input id="attar_limit" type="number" value="1000" min=5></span>
-<input id="gift_button" class="button" type="button" value="Simulate" onclick="simulate_gift()"></section>
+<input id="gift_button" class="button" type="button" value="Simulate" onclick="simulate('gift')"></section>
 <section id="gift_results"></section>
 
 </body></html>
