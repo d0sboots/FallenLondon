@@ -30,6 +30,10 @@ function display_results(results_node, state, actions) {
     add_span(results_node).textContent =
       `Persuasive/Action: ${to_thousandths(state.persuasive/actions)} cp`;
   }
+  if (state.e_i !== 0) {
+    add_span(results_node).textContent =
+      `EIs/Action: ${to_thousandths(state.e_i/actions)}`;
+  }
   add_span(results_node).textContent =
     `Actions/Trip: ${to_thousandths(actions/state.num_trips)}`;
 }
@@ -41,8 +45,10 @@ function get_checked(choices) {
 }
 
 function get_knobs() {
-  knobs = Object.fromEntries(["watchful", "persuasive", "gear_diff", "rare_chance", "num_trials"]
-      .map(key => [key, Number(document.getElementById(key).value)]));
+  knobs = Object.fromEntries(["watchful", "persuasive", "gear_diff",
+    "num_trials", "attar_limit", "batch_size"]
+      .map(key => [key, document.getElementById(key).value | 0]));
+  knobs.rare_chance = Number(document.getElementById("rare_chance").value);
   knobs.near_choice = get_checked(document.getElementsByName("near_radio"));
   knobs.far_choice = get_checked(document.getElementsByName("far_radio"));
   return knobs;
@@ -52,7 +58,6 @@ function simulate(which) {
   let results = document.getElementById(which + "_results");
   let button = document.getElementById(which + "_button");
   let knobs = get_knobs();
-  let attar_limit = document.getElementById("attar_limit").value | 0;
 
   let original_button_value = button.value;
   let original_button_onclick = button.onclick;
@@ -61,7 +66,7 @@ function simulate(which) {
   button.onclick = null;
 
   let worker = new Worker("worker.js");
-  worker.postMessage([which, knobs, attar_limit]);
+  worker.postMessage([which, knobs]);
   worker.onmessage = msg => {
     let [result_state, actions] = msg.data;
 

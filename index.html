@@ -25,7 +25,36 @@ These affect all the simulations below.<br>
     Gift your Attar</a> rare success chance</label>
 <input id="rare_chance" type="number" value="22.5" min="0" max="100" step="any"></span>
 <span class="stats"><label for="num_trials">Number of Trials (more is higher accuracy but slower)</label>
-  <input id="num_trials" type="number" value="100000" min="1"></span></section>
+  <input id="num_trials" type="number" value="100000" min="1"></span>
+</section>
+<h2>Passive Grinds</h2><section>
+These are done opportunistically, using 7 actions each time the card is drawn.
+(One to enter, 5 for your allotted
+<a href="https://fallenlondon.fandom.com/wiki/Arbor:_Permission_to_Linger">
+  Permission to Linger</a>, and one to leave.)
+
+<h3><a href="https://fallenlondon.fandom.com/wiki/Spy_on_London%27s_Embassy">Spy on London's Embassy</a>
+  in <a href="https://fallenlondon.fandom.com/wiki/Near_Arbor_(North)">Near Arbor (North)</a></h3>
+A simple grind where you just spam the same action.
+Requires Watchful 125 for full success. Don't double-count the Echoes and the
+Extraordinary Implications reported here; the EIs are already factored in to
+the income.
+<input id="spy_button" class="button" type="button" value="Simulate" onclick="simulate('spy')"></section>
+<section id="spy_results"></section>
+
+<h3>Build Attar to convert via
+  <a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
+    Gift your Attar in tribute to the Roseate Queen</a></h3><section>
+The next three all follow the same basic principle: Use the chosen action in
+Near Arbor to build Attar to 5 (or more), when you are forcibly moved to Far
+Arbor. Then continue to build Attar using the given method, until finally
+converting it all using
+<a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
+  Gift your Attar in tribute to the Roseate Queen</a>. Because the conversion has a rare success
+that converts all remaining Attar at once, when doing large enough batches the cost of movement and
+conversion is negligible, and the efficiency approaches that of the chosen action loop. However, the
+profits are deferred, whereas with spying they are immediate. Note that Surrendering also pays some
+of its profit immediately, in the form of Extraordinary Implications.
 <p>
 The following action will be used to gain Attar in Near Arbor:
 <div><input id="near_explore" name="near_radio" type="radio" checked="true">
@@ -46,36 +75,28 @@ The following action will be used to gain Attar in Far Arbor:
   <label for="far_surrender"><a href="https://fallenlondon.fandom.com/wiki/Surrender_some_of_your_Attar">
     Surrender some of your Attar</a> (Requires <b><i>low</i></b> Persuasive)</label></div>
 
-<h2>Passive Grinds</h2><section>
-These are done opportunistically, using 7 actions each time the card is drawn.
-(One to enter, 5 for your allotted
-<a href="https://fallenlondon.fandom.com/wiki/Arbor:_Permission_to_Linger">
-  Permission to Linger</a>, and one to leave.)
-
-<h3><a href="https://fallenlondon.fandom.com/wiki/Spy_on_London%27s_Embassy">Spy on London's Embassy</a>
-  in <a href="https://fallenlondon.fandom.com/wiki/Near_Arbor_(North)">Near Arbor (North)</a></h3>
-A simple grind where you just spam the same action.
-Requires Watchful 125 for full success.
-<input id="spy_button" class="button" type="button" value="Simulate" onclick="simulate('spy')"></section>
-<section id="spy_results"></section>
-
-<h3>Build Attar to convert via
-  <a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
-    Gift your Attar in tribute to the Roseate Queen</a></h3><section>
-The next three all follow the same basic principle: Use the chosen action in
-Near Arbor to build Attar to 5 (or more), when you are forcibly moved to Far
-Arbor. Then continue to build Attar using the given method, until finally
-converting it all using
-<a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
-  Gift your Attar in tribute to the Roseate Queen</a>. Because the conversion has a rare success
-that converts all remaining Attar at once, when doing large enough batches the cost of movement and
-conversion is negligible, and the efficiency approaches that of the chosen action loop. However, the
-profits are deferred, whereas with spying they are immediate. Note that Surrendering also pays some
-of its profit immediately, in the form of Extraordinary Implications.
-<p>
 <span class="stats"><label for="attar_limit">Convert once Attar reaches</label>
 <input id="attar_limit" type="number" value="1000" min=5></span>
 <input id="gift_button" class="button" type="button" value="Simulate" onclick="simulate('gift')"></section>
 <section id="gift_results"></section>
+
+<h2>Active Grinds</h2><section>
+These are active, where you can stay in Arbor for as long as you want. They
+center around
+<a href="https://fallenlondon.fandom.com/wiki/Investigate_the_Near-Arbori">Investigate_the_Near-Arbori</a>,
+which lets you trade Extraordinary Implications for Permission to Linger.
+<p>
+<span class="stats"><label for="batch_size">
+  <a href="https://fallenlondon.fandom.com/wiki/Investigate_the_Near-Arbori">Investigate</a>
+  this many times per run</label>
+  <input id="batch_size" type="number" value="99" min="0" size="3em"></span></section>
+<h3>Loop with <a href="https://fallenlondon.fandom.com/wiki/Spy_on_London%27s_Embassy">
+Spy on London's Embassy</a> to get Extraordinary Implications</h3><section>
+This assumes you will always
+<a href="https://fallenlondon.fandom.com/wiki/Take_a_short-cut_north">Take a short-cut north</a>,
+although at <i><b>very</b></i> low Watchful that is not optimal.
+<input id="loop_button" class="button" type="button" value="Simulate"
+onclick="simulate('loop')"></section>
+<section id="loop_results"></section>
 
 </body></html>

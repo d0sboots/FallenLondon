@@ -123,16 +123,22 @@ function gift_attar(state, rare_chance) {
   }
 }
 
-function simulate_spy(knobs) {
-  let num_trials = knobs.num_trials;
+function setup_spy(knobs) {
   let success = new State();
   let failure = new State();
   let acc = new State();
   success.pennies = 500;  // 2 EI
+  success.e_i = 2;
   success.permission = -1;
   failure.permission = -2;
   let prob = challenge(knobs.watchful, 75, WATCHFUL, success, failure);
-  let distribution = new Bernoulli(prob, success, failure, acc);
+  return new Bernoulli(prob, success, failure, acc);
+}
+
+function simulate_spy(knobs) {
+  let num_trials = knobs.num_trials;
+  let distribution = setup_spy(knobs);
+  let acc = distribution.accumulator;
   let actions = 0;
   for (let i = 0; i < num_trials; ++i) {
     actions += 2;  // Enter and exit
@@ -146,7 +152,7 @@ function simulate_spy(knobs) {
   return [acc, actions];
 }
 
-function simulate_gift(knobs, attar_limit) {
+function simulate_gift(knobs) {
   let rare_chance = knobs.rare_chance / 100;
   let num_trials = knobs.num_trials;
   // Setup far chosen action
@@ -203,7 +209,7 @@ function simulate_gift(knobs, attar_limit) {
             streets--;  // Walk north
           } else {
             build_dist.sample();
-            if (acc.attar >= attar_limit) {
+            if (acc.attar >= knobs.attar_limit) {
               converting = true;
             }
           }
@@ -217,7 +223,71 @@ function simulate_gift(knobs, attar_limit) {
   return [acc, actions];
 }
 
+function simulate_loop(knobs) {
+  let num_trials = knobs.num_trials;
+
+  let spy_dist = setup_spy(knobs);
+  // The permission loss is built-in to the loop, adjust.
+  spy_dist.success.permission += 1;
+  spy_dist.failure.permission += 1;
+  let acc = spy_dist.accumulator;
+
+  let success = new State();
+  let failure = new State();
+  let shortcut_prob = challenge(knobs.watchful, 79, WATCHFUL, success, failure);
+  let shortcut_win = success[WATCHFUL];
+  let shortcut_lose = failure[WATCHFUL];
+  let streets = 2;  // Start/end in North Arbor
+
+  let try_shortcut = function() {
+    if (Math.random() < shortcut_prob) {
+      acc.watchful += shortcut_win;
+      streets = 2;
+    } else {
+      acc.watchful += shortcut_lose;
+      streets = Math.floor(Math.random() * 5) + 1;
+    }
+  }
+
+  let actions = 0;
+  for (let i = 0; i < num_trials; ++i) {
+    actions += 2;  // Enter and exit
+    acc.permission = 5;
+    let investigating = true;
+    while (acc.permission > 0) {
+      if (investigating) {
+        if (streets < 4) {
+          streets++;  // Walk south
+        } else {
+          // This is guaranteed, so we can do it all at once
+          actions += knobs.batch_size;
+          acc.permission += 3 * knobs.batch_size;
+          acc.e_i -= 3 * knobs.batch_size;
+          acc.pennies -= 750 * knobs.batch_size;
+          investigating = false;
+          continue;  // Avoid increments at end
+        }
+      } else {
+        if (streets == 4) {
+          // Take a short-cut north
+          try_shortcut();
+        } else if (streets > 2) {
+          streets--;  // Walk north
+        } else if (streets < 2) {
+          streets++;  // Walk south
+        } else {
+          spy_dist.sample();
+        }
+      }
+      acc.permission--;
+      actions++;
+    }
+  }
+  acc.num_trips = num_trials;
+  return [acc, actions];
+}
+
 onmessage = function(msg) {
-  let [which, knobs, attar_limit] = msg.data;
-  postMessage(self["simulate_" + which](knobs, attar_limit));
+  let [which, knobs] = msg.data;
+  postMessage(self["simulate_" + which](knobs));
 }
