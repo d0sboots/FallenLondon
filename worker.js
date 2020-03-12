@@ -192,7 +192,6 @@ function simulate_gift(knobs) {
         if (acc.attar < 3) {
           // The city washes away
           near = true;
-          streets = 3;
         } else if (converting) {
           if (streets < 5) {
             streets++;  // Walk south
