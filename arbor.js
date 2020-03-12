@@ -30,6 +30,10 @@ function display_results(results_node, state, actions) {
     add_span(results_node).textContent =
       `Persuasive/Action: ${to_thousandths(state.persuasive/actions)} cp`;
   }
+  if (state.dangerous !== 0) {
+    add_span(results_node).textContent =
+      `Dangerous/Action: ${to_thousandths(state.dangerous/actions)} cp`;
+  }
   if (state.e_i !== 0) {
     add_span(results_node).textContent =
       `EIs/Action: ${to_thousandths(state.e_i/actions)}`;
@@ -45,8 +49,8 @@ function get_checked(choices) {
 }
 
 function get_knobs() {
-  knobs = Object.fromEntries(["watchful", "persuasive", "gear_diff",
-    "num_trials", "attar_limit", "batch_size"]
+  knobs = Object.fromEntries(["watchful", "persuasive", "dangerous",
+    "gear_diff", "num_trials", "attar_limit", "batch_size"]
       .map(key => [key, document.getElementById(key).value | 0]));
   knobs.rare_chance = Number(document.getElementById("rare_chance").value);
   knobs.near_choice = get_checked(document.getElementsByName("near_radio"));

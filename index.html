@@ -18,6 +18,8 @@ These affect all the simulations below.<br>
   <input id="watchful" type="number" value="167" min="0" max="999" size="3em"></span>
 <span class="stats"><label for="persuasive">Persuasive (with reduction gear)</label>
   <input id="persuasive" type="number" value="20" min="0" max="999"></span>
+<span class="stats"><label for="dangerous">Dangerous (with best gear)</label>
+  <input id="dangerous" type="number" value="125" min="0" max="999"></span>
 <span class="stats"><label for="gear_diff">Difference between best and worst Watchful obtainable
     with gear changes</label><input id="gear_diff" type="number" value="50" min="0" max="999"></span>
 <span class="stats"><label for="rare_chance">
@@ -63,6 +65,9 @@ The following action will be used to gain Attar in Near Arbor:
 <div><input id="near_tend" name="near_radio" type="radio">
   <label for="near_tend"><a href="https://fallenlondon.fandom.com/wiki/Become_a_serpent-tender_in_exchange_for_Attar">
     Become a serpent-tender in exchange for Attar</a> (No prerequisite)</label></div>
+<div><input id="near_labour" name="near_radio" type="radio">
+  <label for="near_labour"><a href="https://fallenlondon.fandom.com/wiki/Labour_in_the_temple">
+    Labour in the temple</a> (Requires Dangerous 125 for full success)</label></div>
 <p>
 The following action will be used to gain Attar in Far Arbor:
 <div><input id="far_walk" name="far_radio" type="radio" checked="true">
@@ -74,6 +79,9 @@ The following action will be used to gain Attar in Far Arbor:
 <div><input id="far_surrender" name="far_radio" type="radio">
   <label for="far_surrender"><a href="https://fallenlondon.fandom.com/wiki/Surrender_some_of_your_Attar">
     Surrender some of your Attar</a> (Requires <b><i>low</i></b> Persuasive)</label></div>
+<div><input id="far_shepherd" name="far_radio" type="radio">
+  <label for="far_shepherd"><a href="https://fallenlondon.fandom.com/wiki/Serve_as_a_Serpent-Shepherd">
+    Serve as a Serpent-Shepherd</a> (No stat check, doesn't increase Attar but is still here for comparison)</label></div>
 
 <span class="stats"><label for="attar_limit">Convert once Attar reaches</label>
 <input id="attar_limit" type="number" value="1000" min=5></span>

@@ -1,11 +1,13 @@
 // Named constants for setting object fields dynamically.
 WATCHFUL = "watchful";
 PERSUASIVE = "persuasive";
+DANGEROUS = "dangerous";
 
 class State {
   constructor() {
     this.watchful = 0;
     this.persuasive = 0;
+    this.dangerous = 0;
     this.pennies = 0;
     this.attar = 0;
     this.permission = 0;
@@ -16,6 +18,7 @@ class State {
   add(other) {
     this.watchful += other.watchful;
     this.persuasive += other.persuasive;
+    // dangerous is summed separately in the only place that modifies it
     this.pennies += other.pennies;
     this.attar += other.attar;
     this.permission += other.permission;
@@ -59,6 +62,29 @@ class SerpentTend {
   }
 };
 
+class TempleLabour {
+  constructor(acc, dangerous) {
+    let success = new State();
+    let failure = new State();
+    this.probability = challenge(dangerous, 75, DANGEROUS, success, failure);
+    this.dangerous_success = success.dangerous;
+    this.dangerous_failure = failure.dangerous;
+    this.accumulator = acc;
+  }
+
+  sample() {
+    let acc = this.accumulator;
+    if (Math.random() < this.probability) {
+      acc.dangerous += this.dangerous_success;
+      acc.attar += acc.permission;
+    } else {
+      acc.dangerous += this.dangerous_failure;
+      acc.pennies += acc.permission * 250;  // 1x Sworn Statement
+    }
+    acc.permission = 1;  // It will be decremented later.
+  }
+};
+
 function chosen_near_distribution(knobs, acc) {
   let success = new State();
   let failure = new State();
@@ -71,10 +97,24 @@ function chosen_near_distribution(knobs, acc) {
       return [new Bernoulli(prob, success, failure, acc), 3];
     case "tend":
       return [new SerpentTend(acc), 5];
+    case "labour":
+      return [new TempleLabour(acc, knobs.dangerous), 1];
     default:
       throw new Error("No checkbox checked: " + knobs.near_choice);
   }
 }
+
+class SerpentShepherd {
+  constructor(acc) {
+    this.accumulator = acc;
+  }
+
+  sample() {
+    let acc = this.accumulator;
+    acc.pennies += acc.permission * 250;  // 1x Presbyterate Passphrase
+    acc.permission = 1;  // It will be decremented later.
+  }
+};
 
 function chosen_far_distribution(knobs) {
   let success = new State();
@@ -107,6 +147,8 @@ function chosen_far_distribution(knobs) {
       prob = challenge(knobs.persuasive, 100, PERSUASIVE, success, failure);
       target_street = 4;
       break;
+    case "shepherd":
+      return [new SerpentShepherd(acc), 1];
     default:
       throw new Error("No checkbox checked: " + knobs.far_choice);
   }
