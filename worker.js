@@ -220,6 +220,8 @@ function simulate_gift(knobs) {
           // Enter far arbor
           near = false;
           streets = 3;
+          actions++;
+          continue;  // *Doesn't* cost permission
         } else if (streets < near_target_street) {
           streets++;  // Walk south
         } else if (streets > near_target_street) {
