@@ -23,5 +23,6 @@ input {
 .processing:hover { background-color: #c88d00 }
 .stats { display: inline-block; margin-right: 20px }
 .error { color:#e02020 }
-.stats input { width: 50px }
+.stats input[type="text"] { width: 50px }
+.stats input[type="number"] { width: 50px }
 #num_trials { width: 70px }

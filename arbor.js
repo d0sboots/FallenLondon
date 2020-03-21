@@ -22,6 +22,8 @@ function display_results(results_node, state, actions) {
   }
   add_span(results_node).textContent =
     `Echoes/Action: ${to_thousandths(state.pennies*.01/actions)}`;
+  add_span(results_node).textContent =
+    `Echoes/Trip: ${to_thousandths(state.pennies*.01/state.num_trips)}`;
   if (state.watchful !== 0) {
     add_span(results_node).textContent =
       `Watchful/Action: ${to_thousandths(state.watchful/actions)} cp`;
@@ -34,9 +36,10 @@ function display_results(results_node, state, actions) {
     add_span(results_node).textContent =
       `Dangerous/Action: ${to_thousandths(state.dangerous/actions)} cp`;
   }
-  if (state.e_i !== 0) {
+  let e_i_per_action = to_thousandths(state.e_i/actions);
+  if (e_i_per_action !== 0) {
     add_span(results_node).textContent =
-      `EIs/Action: ${to_thousandths(state.e_i/actions)}`;
+      `EIs/Action: ${e_i_per_action}`;
   }
   add_span(results_node).textContent =
     `Actions/Trip: ${to_thousandths(actions/state.num_trips)}`;
@@ -49,8 +52,8 @@ function get_checked(choices) {
 }
 
 function get_knobs() {
-  knobs = Object.fromEntries(["watchful", "persuasive", "dangerous",
-    "gear_diff", "num_trials", "attar_limit", "batch_size"]
+  knobs = Object.fromEntries(["watchful", "persuasive", "dangerous", "gear_diff",
+    "num_trials", "attar_limit", "batch_size", "walk_threshold", "surrender_threshold"]
       .map(key => [key, document.getElementById(key).value | 0]));
   knobs.rare_chance = Number(document.getElementById("rare_chance").value);
   knobs.near_choice = get_checked(document.getElementsByName("near_radio"));

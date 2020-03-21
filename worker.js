@@ -85,16 +85,20 @@ class TempleLabour {
   }
 };
 
-function chosen_near_distribution(knobs, acc) {
+function setup_explore(knobs, acc) {
   let success = new State();
   let failure = new State();
+  // This doesn't set permission; it's handled outside, in the main loop.
+  success.attar = 2;
+  failure.attar = -1;
+  let prob = challenge(knobs.watchful, 75, WATCHFUL, success, failure);
+  return new Bernoulli(prob, success, failure, acc);
+}
+
+function chosen_near_distribution(knobs, acc) {
   switch (knobs.near_choice) {
     case "explore":
-      // This doesn't set permission; it's handled outside, in the main loop.
-      success.attar = 2;
-      failure.attar = -1;
-      let prob = challenge(knobs.watchful, 75, WATCHFUL, success, failure);
-      return [new Bernoulli(prob, success, failure, acc), 3];
+      return [setup_explore(knobs, acc), 3];
     case "tend":
       return [new SerpentTend(acc), 5];
     case "labour":
@@ -116,43 +120,54 @@ class SerpentShepherd {
   }
 };
 
-function chosen_far_distribution(knobs) {
+function setup_walk(knobs, acc) {
   let success = new State();
   let failure = new State();
+  success.attar = 2;
+  failure.attar = -2;
+  let prob = challenge(knobs.watchful, 100, WATCHFUL, success, failure);
+  return new Bernoulli(prob, success, failure, acc);
+}
+
+function setup_surrender(knobs, acc) {
+  let success = new State();
+  let failure = new State();
+  success.attar = -3;
+  success.pennies = 750;
+  success.e_i = 3;
+  failure.attar = 1;
+  failure.pennies = 250;
+  failure.e_i = 1;
+  let prob = challenge(knobs.persuasive, 100, PERSUASIVE, success, failure);
+  return new Bernoulli(prob, success, failure, acc);
+}
+
+function setup_witness(knobs, acc) {
+  let success = new State();
+  let failure = new State();
+  success.attar = -3;
+  success.pennies = 750;
+  failure.attar = 2;
+  failure.pennies = -250;
+  let prob = challenge(knobs.watchful - knobs.gear_diff, 115, WATCHFUL, success, failure);
+  return new Bernoulli(prob, success, failure, acc);
+}
+
+function chosen_far_distribution(knobs) {
   let acc = new State();
-  let prob, target_street;
   // None of these set permission; it's handled outside, in the main loop.
   switch (knobs.far_choice) {
     case "walk":
-      success.attar = 2;
-      failure.attar = -2;
-      prob = challenge(knobs.watchful, 100, WATCHFUL, success, failure);
-      target_street = 3;
-      break;
+      return [setup_walk(knobs, acc), 3]
     case "witness":
-      success.attar = -3;
-      success.pennies = 750;
-      failure.attar = 2;
-      failure.pennies = -250;
-      prob = challenge(knobs.watchful - knobs.gear_diff, 115, WATCHFUL, success, failure);
-      target_street = 5;
-      break;
+      return [setup_witness(knobs, acc), 5];
     case "surrender":
-      success.attar = -3;
-      success.pennies = 750;
-      success.e_i = 3;
-      failure.attar = 1;
-      failure.pennies = 250;
-      failure.e_i = 1;
-      prob = challenge(knobs.persuasive, 100, PERSUASIVE, success, failure);
-      target_street = 4;
-      break;
+      return [setup_surrender(knobs, acc), 4]
     case "shepherd":
       return [new SerpentShepherd(acc), 1];
     default:
       throw new Error("No checkbox checked: " + knobs.far_choice);
   }
-  return [new Bernoulli(prob, success, failure, acc), target_street];
 }
 
 function gift_attar(state, rare_chance) {
@@ -165,10 +180,9 @@ function gift_attar(state, rare_chance) {
   }
 }
 
-function setup_spy(knobs) {
+function setup_spy(knobs, acc) {
   let success = new State();
   let failure = new State();
-  let acc = new State();
   success.pennies = 500;  // 2 EI
   success.e_i = 2;
   success.permission = -1;
@@ -179,7 +193,7 @@ function setup_spy(knobs) {
 
 function simulate_spy(knobs) {
   let num_trials = knobs.num_trials;
-  let distribution = setup_spy(knobs);
+  let distribution = setup_spy(knobs, new State());
   let acc = distribution.accumulator;
   let actions = 0;
   for (let i = 0; i < num_trials; ++i) {
@@ -266,31 +280,35 @@ function simulate_gift(knobs) {
   return [acc, actions];
 }
 
-function simulate_loop(knobs) {
-  let num_trials = knobs.num_trials;
-
-  let spy_dist = setup_spy(knobs);
-  // The permission loss is built-in to the loop, adjust.
-  spy_dist.success.permission += 1;
-  spy_dist.failure.permission += 1;
-  let acc = spy_dist.accumulator;
-
+function setup_try_shortcut(knobs, acc) {
   let success = new State();
   let failure = new State();
   let shortcut_prob = challenge(knobs.watchful, 79, WATCHFUL, success, failure);
   let shortcut_win = success[WATCHFUL];
   let shortcut_lose = failure[WATCHFUL];
-  let streets = 2;  // Start/end in North Arbor
 
-  let try_shortcut = function() {
+  return function() {
     if (Math.random() < shortcut_prob) {
       acc.watchful += shortcut_win;
-      streets = 2;
+      return 2;
     } else {
       acc.watchful += shortcut_lose;
-      streets = Math.floor(Math.random() * 5) + 1;
+      return Math.floor(Math.random() * 5) + 1;
     }
   }
+}
+
+function simulate_loop(knobs) {
+  let num_trials = knobs.num_trials;
+
+  let spy_dist = setup_spy(knobs, new State());
+  // The permission loss is built-in to the loop, adjust.
+  spy_dist.success.permission += 1;
+  spy_dist.failure.permission += 1;
+  let acc = spy_dist.accumulator;
+
+  let streets = 2;  // Start/end in North Arbor
+  let try_shortcut = setup_try_shortcut(knobs, acc);
 
   let actions = 0;
   for (let i = 0; i < num_trials; ++i) {
@@ -313,7 +331,7 @@ function simulate_loop(knobs) {
       } else {
         if (streets == 4) {
           // Take a short-cut north
-          try_shortcut();
+          streets = try_shortcut();
         } else if (streets > 2) {
           streets--;  // Walk north
         } else if (streets < 2) {
@@ -327,6 +345,157 @@ function simulate_loop(knobs) {
     }
   }
   acc.num_trips = num_trials;
+  return [acc, actions];
+}
+
+function simulate_grind(knobs) {
+  let num_trials = knobs.num_trials;
+  let rare_chance = knobs.rare_chance / 100;
+
+  let spy_dist = setup_spy(knobs, new State());
+  // The permission loss is built-in to the loop, adjust.
+  spy_dist.success.permission += 1;
+  spy_dist.failure.permission += 1;
+  let acc = spy_dist.accumulator;
+
+  let explore_dist = setup_explore(knobs, acc);
+  let walk_dist = setup_walk(knobs, acc);
+  let surrender_dist = setup_surrender(knobs, acc);
+  let try_shortcut = setup_try_shortcut(knobs, acc);
+
+  let streets = 2;  // Start/end in North Arbor
+
+  let actions = 0;
+  acc.e_i = knobs.batch_size * 3;
+  for (let i = 0; i < num_trials; ++i) {
+    actions += 2;  // Enter and exit
+    // Handle entering (near or far.) We lose one Attar on entrance.
+    let near = acc.attar <= 5;
+    if (acc.attar > 0) {
+      acc.attar--;
+    }
+    acc.permission = 5;
+    let stage = 0;
+    while (acc.permission > 0) {
+      if (near && acc.attar >= 5) {
+        // Enter far arbor
+        near = false;
+        streets = 3;
+        actions++;
+        continue;  // *Doesn't* cost permission
+      }
+      if (!near && acc.attar < 3) {
+        // The city washes away
+        near = true;
+        acc.permission--;
+        actions++;
+        continue;
+      }
+      switch (stage) {
+        case 0:  // Building permission
+          if (!near) {  // This shouldn't happen. Advance stage.
+            stage = 2;
+          } else {
+            if (streets > 4) {
+              streets--;  // Walk north
+            } else if (streets < 4) {
+              streets++;  // Walk south
+            } else {
+              // This is guaranteed, so we can do it all at once
+              let rounds = (acc.e_i / 3) | 0;
+              actions += rounds;
+              acc.permission += 3 * rounds;
+              acc.e_i -= 3 * rounds;
+              acc.pennies -= 750 * rounds;
+              stage = 1;
+              continue;  // Avoid increments at end
+            }
+          }
+          break;
+        case 1:  // Build Attar in Near-Arbor
+          if (!near) {  // Normal method of advancing.
+            stage = 2;
+            continue;
+          }
+          if (streets > 3) {
+            streets--;  // Walk north
+          } else if (streets < 3) {
+            streets++;  // Walk south
+          } else {
+            explore_dist.sample();
+            if (acc.attar < 0) {
+              acc.attar = 0;
+            }
+          }
+          break;
+        case 2:  // Build Attar in Far-Arbor
+          if (near) {  // Shouldn't happen. Advance stage.
+            stage = 5;
+            continue;
+          }
+          if (acc.permission <= knobs.walk_threshold) {
+            stage = 3;
+            continue;
+          }
+          if (streets > 3) {
+            streets--;  // Walk north
+          } else if (streets < 3) {
+            streets++;  // Walk south
+          } else {
+            walk_dist.sample();
+          }
+          break;
+        case 3:  // Surrender Attar
+          if (near) {  // Shouldn't happen. Advance stage.
+            stage = 5;
+            continue;
+          }
+          if (acc.permission <= knobs.surrender_threshold) {
+            stage = 4;
+            continue;
+          }
+          if (streets > 4) {
+            streets--;  // Walk north
+          } else if (streets < 4) {
+            streets++;  // Walk south
+          } else {
+            surrender_dist.sample();
+          }
+          break;
+        case 4:  // Gift Attar
+          if (near) {  // Normal method of advancing.
+            stage = 5;
+            continue;
+          }
+          if (streets < 5) {
+            streets++;  // Walk south
+          } else {
+            gift_attar(acc, rare_chance);
+          }
+          break;
+        case 5:  // Buy back EIs
+          if (!near) {  // Shouldn't happen. Decrement stage.
+            stage = 4;
+            continue;
+          }
+          if (streets == 4) {
+            // Take a short-cut north
+            streets = try_shortcut();
+          } else if (streets > 2) {
+            streets--;  // Walk north
+          } else if (streets < 2) {
+            streets++;  // Walk south
+          } else {
+            spy_dist.sample();
+          }
+          break;
+      }
+      acc.permission--;
+      actions++;
+    }
+  }
+  acc.num_trips = num_trials;
+  acc.e_i -= knobs.batch_size * 3;  // Discount what we started with.
   return [acc, actions];
 }
 
