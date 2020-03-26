@@ -321,10 +321,11 @@ function simulate_loop(knobs) {
           streets++;  // Walk south
         } else {
           // This is guaranteed, so we can do it all at once
-          actions += knobs.batch_size;
-          acc.permission += 3 * knobs.batch_size;
-          acc.e_i -= 3 * knobs.batch_size;
-          acc.pennies -= 750 * knobs.batch_size;
+          let rounds = (knobs.initial_eis / 3) | 0;
+          actions += 3 * rounds;
+          acc.permission += 3 * rounds;
+          acc.e_i -= 3 * rounds;
+          acc.pennies -= 750 * rounds;
           investigating = false;
           continue;  // Avoid increments at end
         }
@@ -360,14 +361,16 @@ function simulate_grind(knobs) {
 
   let explore_dist = setup_explore(knobs, acc);
   let walk_dist = setup_walk(knobs, acc);
-  let surrender_dist = setup_surrender(knobs, acc);
   let try_shortcut = setup_try_shortcut(knobs, acc);
 
   let streets = 2;  // Start/end in North Arbor
 
   let actions = 0;
-  acc.e_i = knobs.batch_size * 3;
+  acc.e_i = knobs.initial_eis;
   for (let i = 0; i < num_trials; ++i) {
+    if (knobs.reset_eis) {
+      acc.e_i = knobs.initial_eis;
+    }
     actions += 2;  // Enter and exit
     // Handle entering (near or far.) We lose one Attar on entrance.
     let near = acc.attar <= 5;
@@ -393,8 +396,9 @@ function simulate_grind(knobs) {
       }
       switch (stage) {
         case 0:  // Building permission
-          if (!near) {  // This shouldn't happen. Advance stage.
-            stage = 2;
+          if (!near) {  // Happens if we ran out of time while gifting.
+            stage = 3;
+            continue;
           } else {
             if (streets > 4) {
               streets--;  // Walk north
@@ -430,7 +434,7 @@ function simulate_grind(knobs) {
           break;
         case 2:  // Build Attar in Far-Arbor
           if (near) {  // Shouldn't happen. Advance stage.
-            stage = 5;
+            stage = 4;
             continue;
           }
           if (acc.permission <= knobs.walk_threshold) {
@@ -445,26 +449,9 @@ function simulate_grind(knobs) {
             walk_dist.sample();
           }
           break;
-        case 3:  // Surrender Attar
-          if (near) {  // Shouldn't happen. Advance stage.
-            stage = 5;
-            continue;
-          }
-          if (acc.permission <= knobs.surrender_threshold) {
-            stage = 4;
-            continue;
-          }
-          if (streets > 4) {
-            streets--;  // Walk north
-          } else if (streets < 4) {
-            streets++;  // Walk south
-          } else {
-            surrender_dist.sample();
-          }
-          break;
-        case 4:  // Gift Attar
+        case 3:  // Gift Attar
           if (near) {  // Normal method of advancing.
-            stage = 5;
+            stage = 4;
             continue;
           }
           if (streets < 5) {
@@ -473,9 +460,9 @@ function simulate_grind(knobs) {
             gift_attar(acc, rare_chance);
           }
           break;
-        case 5:  // Buy back EIs
+        case 4:  // Buy back EIs
           if (!near) {  // Shouldn't happen. Decrement stage.
-            stage = 4;
+            stage = 3;
             continue;
           }
           if (streets == 4) {
@@ -495,7 +482,7 @@ function simulate_grind(knobs) {
     }
   }
   acc.num_trips = num_trials;
-  acc.e_i -= knobs.batch_size * 3;  // Discount what we started with.
+  acc.e_i -= knobs.initial_eis;  // Discount what we started with.
   return [acc, actions];
 }
 

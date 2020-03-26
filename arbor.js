@@ -53,11 +53,12 @@ function get_checked(choices) {
 
 function get_knobs() {
   knobs = Object.fromEntries(["watchful", "persuasive", "dangerous", "gear_diff",
-    "num_trials", "attar_limit", "batch_size", "walk_threshold", "surrender_threshold"]
+    "num_trials", "attar_limit", "initial_eis", "walk_threshold"]
       .map(key => [key, document.getElementById(key).value | 0]));
   knobs.rare_chance = Number(document.getElementById("rare_chance").value);
   knobs.near_choice = get_checked(document.getElementsByName("near_radio"));
   knobs.far_choice = get_checked(document.getElementsByName("far_radio"));
+  knobs.reset_eis = document.getElementById("reset_eis").checked;
   return knobs;
 }
 

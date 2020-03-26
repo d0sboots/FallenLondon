@@ -94,10 +94,8 @@ center around
 <a href="https://fallenlondon.fandom.com/wiki/Investigate_the_Near-Arbori">Investigate the Near-Arbori</a>,
 which lets you trade Extraordinary Implications for Permission to Linger.
 <p>
-<span class="stats"><label for="batch_size">
-  <a href="https://fallenlondon.fandom.com/wiki/Investigate_the_Near-Arbori">Investigate</a>
-  this many times per run</label>
-  <input id="batch_size" type="number" value="99" min="0" size="3em"></span></section>
+<span class="stats"><label for="initial_eis">Initial number of Extraordinary Implications</label>
+  <input id="initial_eis" type="number" value="90" min="0" size="3em"></span></section>
 
 <h3>Loop with <a href="https://fallenlondon.fandom.com/wiki/Spy_on_London%27s_Embassy">
 Spy on London's Embassy</a> to get Extraordinary Implications</h3><section>
@@ -116,9 +114,7 @@ passive grinds. Because of the nature of the active grind, only
   <a href="https://fallenlondon.fandom.com/wiki/Explore_the_Gatehouse_Market">
     Explore the Gatehouse Market</a> can be used for getting to Far Arbor; similarly, only
   <a href="https://fallenlondon.fandom.com/wiki/Walk_the_walls">
-    Walk the Walls</a> and
-  <a href="https://fallenlondon.fandom.com/wiki/Surrender_some_of_your_Attar">
-    Surrender some of your Attar</a> are reasonable for building Attar once there.
+    Walk the Walls</a> is reasonable for building Attar once there.
 <p>
 The order of the steps is as follows: <ul>
   <li><a href="https://fallenlondon.fandom.com/wiki/Investigate_the_Near-Arbori">Investigate the Near-Arbori</a>
@@ -126,10 +122,7 @@ The order of the steps is as follows: <ul>
   <li><a href="https://fallenlondon.fandom.com/wiki/Explore_the_Gatehouse_Market">Explore the Gatehouse Market</a>
     to get to Far Arbor.</li>
   <li><a href="https://fallenlondon.fandom.com/wiki/Walk_the_walls">Walk the Walls</a> until
-    Permission to Linger reaches the first target level.</li>
-  <li><a href="https://fallenlondon.fandom.com/wiki/Surrender_some_of_your_Attar">Surrender some of your Attar</a>
-    until Permission to Linger reaches the second target level. (This can be &#8805; the first
-    target, in which case none is surrendered.)</li>
+    Permission to Linger reaches the target level.</li>
   <li><a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
       Gift your Attar in tribute to the Roseate Queen</a>.</li>
   <li><a href="https://fallenlondon.fandom.com/wiki/Take_a_short-cut_north">Take a short-cut north</a>
@@ -146,26 +139,23 @@ as effectively). The price is 2 guaranteed extra actions spent moving.
 <p><span class="stats"><input id="reset_eis" type="checkbox">
 <label for="reset_eis">Reset Extraordinary Implications after each cycle?</label></span>
 <br>
-This controls how EIs are handled from trial to trial. When checked, the supply is reset to cover
-the amount needed for "Investigate this many times per run." These are "bought" (or sold) at a cost
-of 250 pennies each, to account for the opportunity cost of using them here instead of selling them.
-In essence, checking the box simulates using EIs that you gain from an outside source to fuel the
-grind.
+This controls how EIs are handled from trial to trial. When checked, the supply is reset to the the
+initial amount after each trial. These are "bought" (or sold) at a cost of 250 pennies each, to
+account for the opportunity cost of using them here instead of selling them. In essence, checking
+the box simulates using EIs that you gain from an outside source to fuel the grind. This also makes
+the results depend largely on the initial number of EIs, and the target threshold doesn't affect
+things as much.
 <p>
 In contrast, with the box unchecked, the EIs for the next trial are just the ones remaining from the
-previous trial. Due to how the steps of the grind work, this will immediately even out at a number
-that's based on the target thresholds, and the initial value of "Investigate this many times per
-run" will have almost no influence on the final result. This simulates a closed-cycle grind, and has
-a lower EPA than being able to use externally-sourced EIs.
+previous trial. Due to how the steps of the grind work, this will immediately balance out at a number
+that's based on the target threshold, and the initial value of "Investigate this many times per
+run" will have almost no influence on the final result. This simulates a closed-cycle grind, and
+(generally) has a lower EPA than being able to use externally-sourced EIs.
 <p>
 <span class="stats"><label for="walk_threshold">Stop
   <a href="https://fallenlondon.fandom.com/wiki/Walk_the_walls">Walking the Walls</a>
-    once permission &#8805;</label>
+    once permission &#8804;</label>
 <input id="walk_threshold" type="number" value="100" min="0"></span>
-<span class="stats"><label for="surrender_threshold">Stop
-  <a href="https://fallenlondon.fandom.com/wiki/Surrender_some_of_your_Attar">
-    Surrendering Attar</a> once permission &#8805;</label>
-<input id="surrender_threshold" type="number" value="100" min="0"></span>
 <input id="grind_button" class="button" type="button" value="Simulate"
 onclick="simulate('grind')"></section>
 <section id="grind_results"></section>
