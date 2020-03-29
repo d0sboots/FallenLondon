@@ -322,7 +322,7 @@ function simulate_loop(knobs) {
         } else {
           // This is guaranteed, so we can do it all at once
           let rounds = (knobs.initial_eis / 3) | 0;
-          actions += 3 * rounds;
+          actions += rounds;
           acc.permission += 3 * rounds;
           acc.e_i -= 3 * rounds;
           acc.pennies -= 750 * rounds;
