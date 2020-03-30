@@ -152,6 +152,15 @@ that's based on the target threshold, and the initial value of "Investigate this
 run" will have almost no influence on the final result. This simulates a closed-cycle grind, and
 (generally) has a lower EPA than being able to use externally-sourced EIs.
 <p>
+<span class="stats"><input id="optimize_threshold" type="checkbox" checked="true">
+  <label for="optimize_threshold">Optimize threshold?</label></span>
+<br>
+When unchecked, the threshold is used exactly as-is. When checked, we try and stop when attar % 3 =
+2, taking advantage of how quantities are rounded to gain the most favours for the least permissions
+used. At 167 Watchful, this is guaranteed to happen within one of the specified threshold. You can
+do this easily yourself by checking if attar is divisible by 3 starting <b>2</b> above the
+threshold; once it is, Walk the Walls one more time and then head south.
+<p>
 <span class="stats"><label for="walk_threshold">Stop
   <a href="https://fallenlondon.fandom.com/wiki/Walk_the_walls">Walking the Walls</a>
     once permission &#8804;</label>

@@ -59,6 +59,7 @@ function get_knobs() {
   knobs.near_choice = get_checked(document.getElementsByName("near_radio"));
   knobs.far_choice = get_checked(document.getElementsByName("far_radio"));
   knobs.reset_eis = document.getElementById("reset_eis").checked;
+  knobs.optimize_threshold = document.getElementById("optimize_threshold").checked;
   return knobs;
 }
 

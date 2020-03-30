@@ -366,6 +366,7 @@ function simulate_grind(knobs) {
   let streets = 2;  // Start/end in North Arbor
 
   let actions = 0;
+  let threshold = (knobs.walk_threshold + 1) | 0;
   acc.e_i = knobs.initial_eis;
   for (let i = 0; i < num_trials; ++i) {
     if (knobs.reset_eis) {
@@ -437,9 +438,13 @@ function simulate_grind(knobs) {
             stage = 4;
             continue;
           }
-          if (acc.permission <= knobs.walk_threshold) {
-            stage = 3;
-            continue;
+          if (acc.permission <= threshold) {  // High end cut-off
+            if (acc.permission <= threshold - 2 ||  //  Low end cut-off
+                !knobs.optimize_threshold && acc.permission == threshold - 1 ||  // Exact threshold
+                knobs.optimize_threshold && (acc.attar % 3 == 2)) {  // Optimized threshold
+              stage = 3;
+              continue;
+            }
           }
           if (streets > 3) {
             streets--;  // Walk north
