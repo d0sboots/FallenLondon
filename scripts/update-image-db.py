@@ -443,7 +443,7 @@ def print_summary(conn):
     for s in STATES:
       if s not in group:
         continue
-      print('%*s* %d %s' % (2 + indent, '', group[s][0], s))
+      print('%s%s%d %s' % ('*' * indent, ' ' * indent, group[s][0], s))
 
   summary = group_files(conn)
   print('* %d Game Files' % summary[COUNT])
@@ -451,13 +451,13 @@ def print_summary(conn):
     if g not in summary:
       continue
     group = summary[g]
-    print('  * %d %s' % (group[COUNT], g))
+    print('**  %d %s' % (group[COUNT], g))
     for s in ['Paired', 'Unpaired']:
       if s not in group:
         continue
-      print('    * %d %s' % (group[s][COUNT], s))
+      print('***   %d %s' % (group[s][COUNT], s))
       print_leaf(4, group[s], s)
-    print_leaf(2, group, g)
+    print_leaf(3, group, g)
   cur = conn.execute('''SELECT left.wiki_name, right.wiki_name,
        left.wiki_categories, right.wiki_categories
      FROM images as left, images as right
@@ -476,27 +476,28 @@ def print_summary(conn):
 def print_report(conn, states):
   '''Print a summarized report of the DB.'''
   def print_leaf(indent, group, g):
+    header = (indent * '*') + (indent * ' ')
+    header2 = '*' + header + ' '
     for s in states:
       if s not in group:
         continue
-      print('%*s* %s:' % (2 + indent, '', s))
-      print('\n'.join(group[s][1:]))
+      print('%s%s:' % (header, s))
+      print('\n'.join(header2 + x for x in group[s][1:]))
 
   for state in states:
     if state not in STATES:
       raise ValueError('"%s" is not a valid state from %s' % (state, STATES))
   grouping = group_files(conn)
-  print('* Game Files')
   for g in GROUPS:
     if g not in grouping:
       continue
     group = grouping[g]
-    print('  * %s' % g)
+    print('* %s' % g)
     for s in ['Paired', 'Unpaired']:
       if s not in group:
         continue
-      print('    * %s' % s)
-      print_leaf(4, group[s], s)
+      print('**  %s' % s)
+      print_leaf(3, group[s], s)
     print_leaf(2, group, g)
 
 
