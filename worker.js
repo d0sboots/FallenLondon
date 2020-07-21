@@ -95,6 +95,7 @@ function setup_explore(knobs, acc) {
   return new Bernoulli(prob, success, failure, acc);
 }
 
+// Returns a tuple of a distribution and the street that we must travel to.
 function chosen_near_distribution(knobs, acc) {
   switch (knobs.near_choice) {
     case "explore":
@@ -153,6 +154,7 @@ function setup_witness(knobs, acc) {
   return new Bernoulli(prob, success, failure, acc);
 }
 
+// Returns a tuple of a distribution and the street that we must travel to.
 function chosen_far_distribution(knobs) {
   let acc = new State();
   // None of these set permission; it's handled outside, in the main loop.
@@ -198,7 +200,7 @@ function simulate_spy(knobs) {
   let actions = 0;
   for (let i = 0; i < num_trials; ++i) {
     actions += 2;  // Enter and exit
-    acc.permission = 5;
+    acc.permission = 7;
     while (acc.permission > 0) {
       distribution.sample();
       actions++;
@@ -227,7 +229,7 @@ function simulate_gift(knobs) {
     if (acc.attar > 0) {
       acc.attar--;
     }
-    acc.permission = 5;
+    acc.permission = 7;
     while (acc.permission > 0) {
       if (near) {
         if (acc.attar >= 5) {
@@ -277,217 +279,6 @@ function simulate_gift(knobs) {
     }
   }
   acc.num_trips = num_trials;
-  return [acc, actions];
-}
-
-function setup_try_shortcut(knobs, acc) {
-  let success = new State();
-  let failure = new State();
-  let shortcut_prob = challenge(knobs.watchful, 79, WATCHFUL, success, failure);
-  let shortcut_win = success[WATCHFUL];
-  let shortcut_lose = failure[WATCHFUL];
-
-  return function() {
-    if (Math.random() < shortcut_prob) {
-      acc.watchful += shortcut_win;
-      return 2;
-    } else {
-      acc.watchful += shortcut_lose;
-      return Math.floor(Math.random() * 5) + 1;
-    }
-  }
-}
-
-function simulate_loop(knobs) {
-  let num_trials = knobs.num_trials;
-
-  let spy_dist = setup_spy(knobs, new State());
-  // The permission loss is built-in to the loop, adjust.
-  spy_dist.success.permission += 1;
-  spy_dist.failure.permission += 1;
-  let acc = spy_dist.accumulator;
-
-  let streets = 2;  // Start/end in North Arbor
-  let try_shortcut = setup_try_shortcut(knobs, acc);
-
-  let actions = 0;
-  for (let i = 0; i < num_trials; ++i) {
-    actions += 2;  // Enter and exit
-    acc.permission = 5;
-    let investigating = true;
-    while (acc.permission > 0) {
-      if (investigating) {
-        if (streets < 4) {
-          streets++;  // Walk south
-        } else {
-          // This is guaranteed, so we can do it all at once
-          let rounds = (knobs.initial_eis / 3) | 0;
-          actions += rounds;
-          acc.permission += 3 * rounds;
-          acc.e_i -= 3 * rounds;
-          acc.pennies -= 750 * rounds;
-          investigating = false;
-          continue;  // Avoid increments at end
-        }
-      } else {
-        if (streets == 4) {
-          // Take a short-cut north
-          streets = try_shortcut();
-        } else if (streets > 2) {
-          streets--;  // Walk north
-        } else if (streets < 2) {
-          streets++;  // Walk south
-        } else {
-          spy_dist.sample();
-        }
-      }
-      acc.permission--;
-      actions++;
-    }
-  }
-  acc.num_trips = num_trials;
-  return [acc, actions];
-}
-
-function simulate_grind(knobs) {
-  let num_trials = knobs.num_trials;
-  let rare_chance = knobs.rare_chance / 100;
-
-  let spy_dist = setup_spy(knobs, new State());
-  // The permission loss is built-in to the loop, adjust.
-  spy_dist.success.permission += 1;
-  spy_dist.failure.permission += 1;
-  let acc = spy_dist.accumulator;
-
-  let explore_dist = setup_explore(knobs, acc);
-  let walk_dist = setup_walk(knobs, acc);
-  let try_shortcut = setup_try_shortcut(knobs, acc);
-
-  let streets = 2;  // Start/end in North Arbor
-
-  let actions = 0;
-  let threshold = (knobs.walk_threshold + 1) | 0;
-  acc.e_i = knobs.initial_eis;
-  for (let i = 0; i < num_trials; ++i) {
-    if (knobs.reset_eis) {
-      acc.e_i = knobs.initial_eis;
-    }
-    actions += 2;  // Enter and exit
-    // Handle entering (near or far.) We lose one Attar on entrance.
-    let near = acc.attar <= 5;
-    if (acc.attar > 0) {
-      acc.attar--;
-    }
-    acc.permission = 5;
-    let stage = 0;
-    while (acc.permission > 0) {
-      if (near && acc.attar >= 5) {
-        // Enter far arbor
-        near = false;
-        streets = 3;
-        actions++;
-        continue;  // *Doesn't* cost permission
-      }
-      if (!near && acc.attar < 3) {
-        // The city washes away
-        near = true;
-        acc.permission--;
-        actions++;
-        continue;
-      }
-      switch (stage) {
-        case 0:  // Building permission
-          if (!near) {  // Happens if we ran out of time while gifting.
-            stage = 3;
-            continue;
-          } else {
-            if (streets > 4) {
-              streets--;  // Walk north
-            } else if (streets < 4) {
-              streets++;  // Walk south
-            } else {
-              // This is guaranteed, so we can do it all at once
-              let rounds = (acc.e_i / 3) | 0;
-              actions += rounds;
-              acc.permission += 3 * rounds;
-              acc.e_i -= 3 * rounds;
-              acc.pennies -= 750 * rounds;
-              stage = 1;
-              continue;  // Avoid increments at end
-            }
-          }
-          break;
-        case 1:  // Build Attar in Near-Arbor
-          if (!near) {  // Normal method of advancing.
-            stage = 2;
-            continue;
-          }
-          if (streets > 3) {
-            streets--;  // Walk north
-          } else if (streets < 3) {
-            streets++;  // Walk south
-          } else {
-            explore_dist.sample();
-            if (acc.attar < 0) {
-              acc.attar = 0;
-            }
-          }
-          break;
-        case 2:  // Build Attar in Far-Arbor
-          if (near) {  // Shouldn't happen. Advance stage.
-            stage = 4;
-            continue;
-          }
-          if (acc.permission <= threshold) {  // High end cut-off
-            if (acc.permission <= threshold - 2 ||  //  Low end cut-off
-                !knobs.optimize_threshold && acc.permission == threshold - 1 ||  // Exact threshold
-                knobs.optimize_threshold && (acc.attar % 3 == 2)) {  // Optimized threshold
-              stage = 3;
-              continue;
-            }
-          }
-          if (streets > 3) {
-            streets--;  // Walk north
-          } else if (streets < 3) {
-            streets++;  // Walk south
-          } else {
-            walk_dist.sample();
-          }
-          break;
-        case 3:  // Gift Attar
-          if (near) {  // Normal method of advancing.
-            stage = 4;
-            continue;
-          }
-          if (streets < 5) {
-            streets++;  // Walk south
-          } else {
-            gift_attar(acc, rare_chance);
-          }
-          break;
-        case 4:  // Buy back EIs
-          if (!near) {  // Shouldn't happen. Decrement stage.
-            stage = 3;
-            continue;
-          }
-          if (streets == 4) {
-            // Take a short-cut north
-            streets = try_shortcut();
-          } else if (streets > 2) {
-            streets--;  // Walk north
-          } else if (streets < 2) {
-            streets++;  // Walk south
-          } else {
-            spy_dist.sample();
-          }
-          break;
-      }
-      acc.permission--;
-      actions++;
-    }
-  }
-  acc.num_trips = num_trials;
-  acc.e_i -= knobs.initial_eis;  // Discount what we started with.
   return [acc, actions];
 }
 

@@ -30,8 +30,8 @@ These affect all the simulations below.<br>
   <input id="num_trials" type="number" value="100000" min="1"></span>
 </section>
 <h2>Passive Grinds</h2><section>
-These are done opportunistically, using 7 actions each time the card is drawn.
-(One to enter, 5 for your allotted
+These are done opportunistically, using 9 actions each time the card is drawn.
+(One to enter, 7 for your allotted
 <a href="https://fallenlondon.fandom.com/wiki/Arbor:_Permission_to_Linger">
   Permission to Linger</a>, and one to leave.)
 
@@ -89,84 +89,8 @@ The following action will be used to gain Attar in Far Arbor:
 <section id="gift_results"></section>
 
 <h2>Active Grinds</h2><section>
-These are active, where you can stay in Arbor for as long as you want. They
-center around
+It used to be possible to actively grind in Arbor, using
 <a href="https://fallenlondon.fandom.com/wiki/Investigate_the_Near-Arbori">Investigate the Near-Arbori</a>,
-which lets you trade Extraordinary Implications for Permission to Linger.
-<p>
-<span class="stats"><label for="initial_eis">Initial number of Extraordinary Implications</label>
-  <input id="initial_eis" type="number" value="90" min="0" size="3em"></span></section>
-
-<h3>Loop with <a href="https://fallenlondon.fandom.com/wiki/Spy_on_London%27s_Embassy">
-Spy on London's Embassy</a> to get Extraordinary Implications</h3><section>
-This assumes you will always
-<a href="https://fallenlondon.fandom.com/wiki/Take_a_short-cut_north">Take a short-cut north</a>,
-although at <i><b>very</b></i> low Watchful that is not optimal.
-<input id="loop_button" class="button" type="button" value="Simulate"
-onclick="simulate('loop')"></section>
-<section id="loop_results"></section>
-
-<h3>Full grind using
-  <a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
-    Gift your Attar in tribute to the Roseate Queen</a></h3><section>
-This is essentially a combination of the loop method above with the Attar-building strategy from the
-passive grinds. Because of the nature of the active grind, only
-  <a href="https://fallenlondon.fandom.com/wiki/Explore_the_Gatehouse_Market">
-    Explore the Gatehouse Market</a> can be used for getting to Far Arbor; similarly, only
-  <a href="https://fallenlondon.fandom.com/wiki/Walk_the_walls">
-    Walk the Walls</a> is reasonable for building Attar once there.
-<p>
-The order of the steps is as follows: <ul>
-  <li><a href="https://fallenlondon.fandom.com/wiki/Investigate_the_Near-Arbori">Investigate the Near-Arbori</a>
-    until you run out of Extraordinary Implications.</li>
-  <li><a href="https://fallenlondon.fandom.com/wiki/Explore_the_Gatehouse_Market">Explore the Gatehouse Market</a>
-    to get to Far Arbor.</li>
-  <li><a href="https://fallenlondon.fandom.com/wiki/Walk_the_walls">Walk the Walls</a> until
-    Permission to Linger reaches the target level.</li>
-  <li><a href="https://fallenlondon.fandom.com/wiki/Gift_your_Attar_in_tribute_to_the_Roseate_Queen">
-      Gift your Attar in tribute to the Roseate Queen</a>.</li>
-  <li><a href="https://fallenlondon.fandom.com/wiki/Take_a_short-cut_north">Take a short-cut north</a>
-    and <a href="https://fallenlondon.fandom.com/wiki/Spy_on_London%27s_Embassy">Spy on London's Embassy</a>
-    until you run out of Permission to Linger.</li>
-</ul>
-The steps are done this way, instead of the more "natural" order that has Spy on London's Embassy
-while you're still in Near Arbor and ends with Gifting your Attar, because this way you don't have
-to guess at how much Permission to leave in order to finish gifting, and all the excess can be
-efficiently used to buy EIs. Done in the opposite order, either you guess low (and risk having to
-come back to Arbor to finish cashing in), or guess high (and waste extra actions that can't be used
-as effectively). The price is 2 guaranteed extra actions spent moving.
-
-<p><span class="stats"><input id="reset_eis" type="checkbox">
-<label for="reset_eis">Reset Extraordinary Implications after each cycle?</label></span>
-<br>
-This controls how EIs are handled from trial to trial. When checked, the supply is reset to the the
-initial amount after each trial. These are "bought" (or sold) at a cost of 250 pennies each, to
-account for the opportunity cost of using them here instead of selling them. In essence, checking
-the box simulates using EIs that you gain from an outside source to fuel the grind. This also makes
-the results depend largely on the initial number of EIs, and the target threshold doesn't affect
-things as much.
-<p>
-In contrast, with the box unchecked, the EIs for the next trial are just the ones remaining from the
-previous trial. Due to how the steps of the grind work, this will immediately balance out at a number
-that's based on the target threshold, and the initial value of "Investigate this many times per
-run" will have almost no influence on the final result. This simulates a closed-cycle grind, and
-(generally) has a lower EPA than being able to use externally-sourced EIs.
-<p>
-<span class="stats"><input id="optimize_threshold" type="checkbox" checked="true">
-  <label for="optimize_threshold">Optimize threshold?</label></span>
-<br>
-When unchecked, the threshold is used exactly as-is. When checked, we try and stop when attar % 3 =
-2, taking advantage of how quantities are rounded to gain the most favours for the least permissions
-used. At 167 Watchful, this is guaranteed to happen within one of the specified threshold. You can
-do this easily yourself by checking if attar is divisible by 3 starting <b>2</b> above the
-threshold; once it is, Walk the Walls one more time and then head south.
-<p>
-<span class="stats"><label for="walk_threshold">Stop
-  <a href="https://fallenlondon.fandom.com/wiki/Walk_the_walls">Walking the Walls</a>
-    once permission &#8804;</label>
-<input id="walk_threshold" type="number" value="100" min="0"></span>
-<input id="grind_button" class="button" type="button" value="Simulate"
-onclick="simulate('grind')"></section>
-<section id="grind_results"></section>
-
+to trade Extraordinary Implications for Permission to Linger. In July 2020 that action was changed,
+and it is no longer possible to gain Permission to Linger.</section>
 </body></html>
