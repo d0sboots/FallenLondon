@@ -524,6 +524,10 @@ async def main():
       help='''Output a detailed report, without modifying anything.
       The argument is a comma-separated list of states to report for,
       defaulting to those that were attempted but not matching.''')
+  parser.add_argument('--cookie', help='''Set of cookies to send with
+      requests to the wiki. Use this to make edits under your username. Get
+      this by grabbing the cookie argument from a request in your browser,
+      with DevTools.''')
 
   args = parser.parse_args()
   if not (args.categories or args.map or args.download or
@@ -558,7 +562,11 @@ async def main():
       server_image BLOB
       )''')
 
-  async with aiohttp.ClientSession() as session:
+  cookies = {}
+  if args.cookie:
+    cookie_list = args.cookie.split(', ')
+    cookies = dict(x.split('=', 1) for x in cookie_list)
+  async with aiohttp.ClientSession(cookies=cookies) as session:
     if args.categories:
       await update_categories(conn, session)
 
