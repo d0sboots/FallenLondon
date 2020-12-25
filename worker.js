@@ -249,6 +249,9 @@ function simulate_gift(knobs) {
           }
         }
       } else {
+        if (acc.attar >= knobs.attar_limit) {
+          converting = true;
+        }
         if (acc.attar < 3) {
           // The city washes away
           near = true;
@@ -268,9 +271,6 @@ function simulate_gift(knobs) {
             streets--;  // Walk north
           } else {
             build_dist.sample();
-            if (acc.attar >= knobs.attar_limit) {
-              converting = true;
-            }
           }
         }
       }
